@@ -29,9 +29,13 @@ const Login = () => {
 
       const data = await loginUser(email, password);
 
-      login(data.user, data.token);
+      const user = data?.data?.user;
 
-      const role = data.user.role;
+      const token = data?.data?.token;
+
+      login(user, token);
+
+      const role = user?.role;
 
       if (role === "Admin") {
         navigate("/admin");
