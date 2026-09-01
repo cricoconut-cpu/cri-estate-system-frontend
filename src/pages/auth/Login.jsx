@@ -33,6 +33,10 @@ const Login = () => {
 
       const token = data?.data?.token;
 
+      if (!user || !token) {
+        throw new Error("Invalid login response");
+      }
+
       login(user, token);
 
       const role = user?.role;

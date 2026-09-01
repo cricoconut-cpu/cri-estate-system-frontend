@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router-dom";
 
 import Login from "../pages/auth/Login";
 
+import DashboardLayout from "../layouts/DashboardLayout";
+
 import AdminDashboard from "../pages/admin/AdminDashboard";
 
 import AnalystDashboard from "../pages/analyst/AnalystDashboard";
@@ -13,11 +15,13 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/login" element={<Login />} />
 
-      <Route path="/admin" element={<AdminDashboard />} />
+      <Route element={<DashboardLayout />}>
+        <Route path="/admin" element={<AdminDashboard />} />
 
-      <Route path="/analyst" element={<AnalystDashboard />} />
+        <Route path="/analyst" element={<AnalystDashboard />} />
 
-      <Route path="/manager" element={<ManagerDashboard />} />
+        <Route path="/manager" element={<ManagerDashboard />} />
+      </Route>
     </Routes>
   );
 };
