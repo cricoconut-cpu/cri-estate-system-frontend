@@ -1,5 +1,11 @@
 import api from "../api/axios";
 
+export const getSurveySummary = async () => {
+  const response = await api.get("/surveys/summary");
+
+  return response.data;
+};
+
 export const getEstateSurveys = async (estateId) => {
   const response = await api.get(`/surveys/estate/${estateId}`);
 
