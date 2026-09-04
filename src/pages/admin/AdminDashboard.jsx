@@ -1,4 +1,4 @@
-import { Building2, Map, TreePine, Users } from "lucide-react";
+import { Building2, CalendarDays, Map, Users } from "lucide-react";
 
 import StatCard from "../../components/dashboard/StatCard";
 
@@ -54,16 +54,20 @@ sm:grid-cols-2
 lg:grid-cols-4
 "
       >
-        <StatCard title="Total Estates" value={data.estates} icon={Building2} />
+        <StatCard
+          title="Total Estates"
+          value={data.totalEstates}
+          icon={Building2}
+        />
 
-        <StatCard title="Users" value={data.users} icon={Users} />
+        <StatCard title="Total Users" value={data.totalUsers} icon={Users} />
 
-        <StatCard title="Surveys" value={data.surveys} icon={Map} />
+        <StatCard title="Total Surveys" value={data.totalSurveys} icon={Map} />
 
         <StatCard
-          title="Total Trees"
-          value={data.statistics.totalTrees || 0}
-          icon={TreePine}
+          title="Latest Survey Year"
+          value={data.latestSurvey?.year || "-"}
+          icon={CalendarDays}
         />
       </div>
     </div>

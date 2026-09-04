@@ -1,18 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { getEstates } from "../services/estate.service";
-
-import { getUsers } from "../services/user.service";
-
-import { getSurveySummary } from "../services/survey.service";
+import { getAdminDashboard } from "../services/dashboard.service";
 
 const useAdminDashboard = () => {
-  const [data, setData] = useState({
-    estates: 0,
-    users: 0,
-    surveys: 0,
-    statistics: {},
-  });
+  const [data, setData] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -21,25 +12,9 @@ const useAdminDashboard = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        setLoading(true);
+        const response = await getAdminDashboard();
 
-        const [estates, users, surveySummary] = await Promise.all([
-          getEstates(),
-
-          getUsers(),
-
-          getSurveySummary(),
-        ]);
-
-        setData({
-          estates: estates.data.length,
-
-          users: users.data.length,
-
-          surveys: surveySummary.data.totalSurveys,
-
-          statistics: surveySummary.data.statistics,
-        });
+        setData(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
       } finally {
