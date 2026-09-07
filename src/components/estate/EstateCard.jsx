@@ -1,13 +1,9 @@
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, UserRound } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
 const EstateCard = ({ estate }) => {
   const navigate = useNavigate();
-
-  const handleViewEstate = () => {
-    navigate(`/estates/${estate._id}`);
-  };
 
   return (
     <div
@@ -22,116 +18,123 @@ const EstateCard = ({ estate }) => {
       hover:shadow-md
     "
     >
-      {/* Estate Header */}
+      {/* Header */}
 
-      <div
-        className="
-        flex
-        items-start
-        justify-between
-        gap-4
-      "
-      >
-        <div>
-          <h2
-            className="
-            text-xl
-            font-semibold
-            text-slate-900
-          "
-          >
-            {estate.name}
-          </h2>
+      <div>
+        <h2
+          className="
+          text-xl
+          font-semibold
+          text-slate-900
+        "
+        >
+          {estate.name}
+        </h2>
 
-          <div
-            className="
-            mt-2
-            flex
-            items-center
-            gap-2
-            text-sm
-            text-slate-500
-          "
-          >
-            <MapPin size={16} />
+        <div
+          className="
+          mt-2
+          flex
+          items-center
+          gap-2
+          text-sm
+          text-slate-500
+        "
+        >
+          <MapPin size={16} />
 
-            <span>{estate.location || "Location not available"}</span>
-          </div>
+          {estate.district}
         </div>
       </div>
 
-      {/* Estate Information */}
+      {/* Details */}
 
       <div
         className="
         mt-6
-        grid
-        grid-cols-2
-        gap-4
+        space-y-3
       "
       >
         <div
           className="
+          flex
+          justify-between
           rounded-lg
           bg-slate-50
-          p-4
+          p-3
         "
         >
-          <p
+          <span
             className="
-            text-xs
+            text-sm
             text-slate-500
           "
           >
             Area
-          </p>
+          </span>
 
-          <p
+          <span
             className="
-            mt-1
             font-semibold
-            text-slate-900
           "
           >
-            {estate.area ?? "-"} {estate.area != null && "ha"}
-          </p>
+            {estate.area}
+          </span>
         </div>
 
         <div
           className="
+          flex
+          justify-between
           rounded-lg
           bg-slate-50
-          p-4
+          p-3
         "
         >
-          <p
+          <span
             className="
-            text-xs
+            text-sm
             text-slate-500
           "
           >
-            Estate ID
-          </p>
+            Established
+          </span>
 
-          <p
+          <span
             className="
-            mt-1
-            truncate
-            text-sm
-            font-medium
-            text-slate-700
+            font-semibold
           "
           >
-            {estate._id}
-          </p>
+            {estate.established}
+          </span>
+        </div>
+
+        <div
+          className="
+          flex
+          items-center
+          gap-2
+          rounded-lg
+          bg-slate-50
+          p-3
+        "
+        >
+          <UserRound size={16} />
+
+          <span
+            className="
+            text-sm
+          "
+          >
+            {estate.manager?.name}
+          </span>
         </div>
       </div>
 
-      {/* View Estate Button */}
+      {/* Button */}
 
       <button
-        type="button"
-        onClick={handleViewEstate}
+        onClick={() => navigate(`/estates/${estate.id}`)}
         className="
           mt-6
           flex
@@ -145,12 +148,7 @@ const EstateCard = ({ estate }) => {
           py-3
           font-semibold
           text-white
-          transition
           hover:bg-green-800
-          focus:outline-none
-          focus:ring-2
-          focus:ring-green-500
-          focus:ring-offset-2
         "
       >
         View Estate
