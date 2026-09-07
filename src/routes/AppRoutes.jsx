@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AnalystDashboard from "../pages/analyst/AnalystDashboard";
+import EstateDetails from "../pages/estates/EstateDetails";
 import Estates from "../pages/estates/Estates";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 
@@ -59,6 +60,17 @@ const AppRoutes = () => {
               allowedRoles={["Admin", "Analyst", "Estate Manager"]}
             >
               <Estates />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/estates/:estateId"
+          element={
+            <ProtectedRoute
+              allowedRoles={["Admin", "Analyst", "Estate Manager"]}
+            >
+              <EstateDetails />
             </ProtectedRoute>
           }
         />
