@@ -23,3 +23,9 @@ export const getSurveyGeoJson = async (surveyId) => {
 
   return response.data;
 };
+
+export const getSurveyById = async (surveyId) => {
+  const response = await api.get(`/surveys/${surveyId}`);
+
+  return response.data;
+};

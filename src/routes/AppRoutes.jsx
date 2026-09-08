@@ -11,6 +11,7 @@ import AnalystDashboard from "../pages/analyst/AnalystDashboard";
 import EstateDetails from "../pages/estates/EstateDetails";
 import Estates from "../pages/estates/Estates";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
+import SurveyAnalysis from "../pages/surveys/SurveyAnalysis";
 
 const AppRoutes = () => {
   return (
@@ -85,6 +86,15 @@ const AppRoutes = () => {
           }
         />
       </Route>
+
+      <Route
+        path="/surveys/:surveyId"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "Analyst", "Estate Manager"]}>
+            <SurveyAnalysis />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Catch-all Route */}
       <Route path="*" element={<Navigate to="/login" replace />} />
