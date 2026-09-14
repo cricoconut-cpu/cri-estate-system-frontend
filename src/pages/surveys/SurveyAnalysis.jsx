@@ -16,6 +16,8 @@ import {
   YAxis,
 } from "recharts";
 
+import SurveyMap from "../../components/map/SurveyMap";
+
 import { getSurveyById } from "../../services/survey.service";
 
 const SurveyAnalysis = () => {
@@ -53,32 +55,28 @@ const SurveyAnalysis = () => {
     return [
       {
         name: "Healthy",
-        value: statistics.healthy || 0,
+        value: Number(statistics.healthy) || 0,
       },
-
       {
         name: "Moderate",
-        value: statistics.moderate || 0,
+        value: Number(statistics.moderate) || 0,
       },
-
       {
         name: "Mild Stress",
-        value: statistics.mildStress || 0,
+        value: Number(statistics.mildStress) || 0,
       },
-
       {
         name: "Severe Stress",
-        value: statistics.severeStress || 0,
+        value: Number(statistics.severeStress) || 0,
       },
-
       {
         name: "Critical",
-        value: statistics.critical || 0,
+        value: Number(statistics.critical) || 0,
       },
     ];
   }, [statistics]);
 
-  const totalTrees = statistics.totalTrees || 0;
+  const totalTrees = Number(statistics.totalTrees) || 0;
 
   const percentageData = healthData.map((item) => ({
     ...item,
@@ -116,7 +114,9 @@ const SurveyAnalysis = () => {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
 
       <div>
         <h1
@@ -154,7 +154,9 @@ const SurveyAnalysis = () => {
         </p>
       </div>
 
-      {/* Statistics */}
+      {/* =====================================================
+          STATISTICS
+      ====================================================== */}
 
       <div
         className="
@@ -178,7 +180,9 @@ const SurveyAnalysis = () => {
         <StatCard title="Critical" value={statistics.critical} />
       </div>
 
-      {/* Charts */}
+      {/* =====================================================
+          CHARTS
+      ====================================================== */}
 
       <div
         className="
@@ -187,7 +191,9 @@ const SurveyAnalysis = () => {
           lg:grid-cols-2
         "
       >
-        {/* Donut Chart */}
+        {/* ---------------------------------------------------
+            PIE / DONUT CHART
+        ---------------------------------------------------- */}
 
         <div
           className="
@@ -240,7 +246,7 @@ const SurveyAnalysis = () => {
                   label
                 >
                   {healthData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} />
+                    <Cell key={`health-${index}`} />
                   ))}
                 </Pie>
 
@@ -252,7 +258,9 @@ const SurveyAnalysis = () => {
           </div>
         </div>
 
-        {/* Bar Chart */}
+        {/* ---------------------------------------------------
+            BAR CHART
+        ---------------------------------------------------- */}
 
         <div
           className="
@@ -316,7 +324,9 @@ const SurveyAnalysis = () => {
         </div>
       </div>
 
-      {/* Percentage Breakdown */}
+      {/* =====================================================
+          PERCENTAGE BREAKDOWN
+      ====================================================== */}
 
       <div
         className="
@@ -398,9 +408,23 @@ const SurveyAnalysis = () => {
           ))}
         </div>
       </div>
+
+      {/* =====================================================
+          GIS MAP
+      ====================================================== */}
+
+      <SurveyMap
+        imageUrl={survey.files?.orthomosaic?.imageUrl}
+        geoJsonUrl={survey.files?.geoJson?.url}
+        bounds={survey.spatial?.bounds}
+      />
     </div>
   );
 };
+
+/* =========================================================
+   STATISTICS CARD
+========================================================= */
 
 const StatCard = ({ title, value }) => {
   return (
@@ -430,7 +454,7 @@ const StatCard = ({ title, value }) => {
           text-slate-900
         "
       >
-        {(value || 0).toLocaleString()}
+        {(Number(value) || 0).toLocaleString()}
       </p>
     </div>
   );
