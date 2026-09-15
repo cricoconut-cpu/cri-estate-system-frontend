@@ -109,7 +109,7 @@ const Estates = () => {
         "
         >
           {estates.map((estate) => (
-            <EstateCard key={estate._id} estate={estate} />
+            <EstateCard key={estate.id} estate={estate} />
           ))}
         </div>
       )}
