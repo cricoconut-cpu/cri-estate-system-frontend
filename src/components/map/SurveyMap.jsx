@@ -478,6 +478,8 @@ const SurveyMap = ({ imageUrl, geoJsonUrl, bounds }) => {
           bounds={mapBounds}
           className="h-full w-full"
           scrollWheelZoom={true}
+          minZoom={10}
+          maxZoom={22}
         >
           {/* =====================================================
               SATELLITE BASEMAP
