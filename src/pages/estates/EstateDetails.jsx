@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import SurveyComparison from "../../components/estate/SurveyComparison.jsx";
+
 import { getEstateById } from "../../services/estate.service";
 import { getEstateSurveys } from "../../services/survey.service";
 
@@ -19,85 +21,84 @@ const EstateDetails = () => {
 
   /*
   |--------------------------------------------------------------------------
-  | Load estate + surveys
+  | Load Estate + Surveys
   |--------------------------------------------------------------------------
   */
 
   useEffect(() => {
     const loadData = async () => {
+      setLoading(true);
+      setSurveyLoading(true);
+
+      setError("");
+      setSurveyError("");
+
       try {
-        setLoading(true);
-        setSurveyLoading(true);
+        const estateResponse = await getEstateById(estateId);
 
-        setError("");
-        setSurveyError("");
+        setEstate(estateResponse?.data || null);
+      } catch (err) {
+        setError(
+          err.response?.data?.message ||
+            "Failed to load estate."
+        );
+      } finally {
+        setLoading(false);
+      }
 
-        const [estateResponse, surveyResponse] = await Promise.all([
-          getEstateById(estateId),
-          getEstateSurveys(estateId),
-        ]);
+      try {
+        const surveyResponse =
+          await getEstateSurveys(estateId);
 
-        setEstate(estateResponse.data);
+        const surveyData =
+          surveyResponse?.data || [];
 
-        const surveyData = surveyResponse?.data || [];
-
-        /*
-         * Newest survey year first.
-         */
         const sortedSurveys = [...surveyData].sort(
-          (a, b) => Number(b.year) - Number(a.year),
+          (a, b) =>
+            Number(b.year) - Number(a.year)
         );
 
         setSurveys(sortedSurveys);
       } catch (err) {
-        /*
-         * Estate request and survey request can fail independently.
-         * Keep the error handling explicit.
-         */
+        setSurveys([]);
 
-        if (!estate) {
-          setError(err.response?.data?.message || "Failed to load estate.");
-        }
-
-        /*
-         * A 404 here simply means this estate currently
-         * has no survey records.
-         */
-        if (
-          err.response?.status === 404 &&
-          err.config?.url?.includes("/surveys/estate/")
-        ) {
-          setSurveys([]);
-          setSurveyError("No surveys have been recorded for this estate yet.");
-        } else if (err.config?.url?.includes("/surveys/estate/")) {
+        if (err.response?.status === 404) {
           setSurveyError(
-            err.response?.data?.message || "Failed to load estate surveys.",
+            "No surveys have been recorded for this estate yet."
+          );
+        } else {
+          setSurveyError(
+            err.response?.data?.message ||
+              "Failed to load estate surveys."
           );
         }
       } finally {
-        setLoading(false);
         setSurveyLoading(false);
       }
     };
 
-    loadData();
+    if (estateId) {
+      loadData();
+    }
   }, [estateId]);
 
   /*
   |--------------------------------------------------------------------------
-  | Comparison-ready survey data
+  | Surveys available for comparison
   |--------------------------------------------------------------------------
   */
 
   const comparisonSurveys = useMemo(() => {
     return surveys.filter(
-      (survey) => survey?.statistics && Number.isFinite(Number(survey.year)),
+      (survey) =>
+        survey?.statistics &&
+        Number.isFinite(Number(survey.year))
     );
   }, [surveys]);
 
   /*
   |--------------------------------------------------------------------------
-  | Loading
+  | Loading State
   |--------------------------------------------------------------------------
   */
 
@@ -111,7 +112,10 @@ const EstateDetails = () => {
 
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[1, 2, 3].map((item) => (
-              <div key={item} className="h-28 rounded-xl bg-slate-200" />
+              <div
+                key={item}
+                className="h-28 rounded-xl bg-slate-200"
+              />
             ))}
           </div>
         </div>
@@ -121,7 +125,7 @@ const EstateDetails = () => {
 
   /*
   |--------------------------------------------------------------------------
-  | Estate not found
+  | Estate Error
   |--------------------------------------------------------------------------
   */
 
@@ -146,12 +150,13 @@ const EstateDetails = () => {
 
   /*
   |--------------------------------------------------------------------------
-  | Render
+  | Main Page
   |--------------------------------------------------------------------------
   */
 
   return (
     <div className="space-y-8">
+
       {/* =========================================================
           HEADER
       ========================================================== */}
@@ -193,6 +198,7 @@ const EstateDetails = () => {
         </p>
       </div>
 
+
       {/* =========================================================
           ESTATE INFORMATION
       ========================================================== */}
@@ -205,20 +211,43 @@ const EstateDetails = () => {
           lg:grid-cols-4
         "
       >
-        <InfoCard title="Estate ID" value={estate.estateCode || "-"} />
+        <InfoCard
+          title="Estate ID"
+          value={
+            estate.estateCode ||
+            estate.id ||
+            estate._id ||
+            "-"
+          }
+        />
 
-        <InfoCard title="District" value={estate.district || "-"} />
+        <InfoCard
+          title="District"
+          value={estate.district || "-"}
+        />
 
-        <InfoCard title="Area" value={estate.area || "-"} />
+        <InfoCard
+          title="Area"
+          value={estate.area || "-"}
+        />
 
-        <InfoCard title="Manager" value={estate.manager?.name || "-"} />
+        <InfoCard
+          title="Manager"
+          value={
+            estate.manager?.name ||
+            estate.manager ||
+            "-"
+          }
+        />
       </div>
+
 
       {/* =========================================================
           SURVEY HISTORY
       ========================================================== */}
 
       <section>
+
         <div
           className="
             flex
@@ -258,11 +287,15 @@ const EstateDetails = () => {
               text-slate-500
             "
           >
-            {surveys.length} {surveys.length === 1 ? "survey" : "surveys"}
+            {surveys.length}{" "}
+            {surveys.length === 1
+              ? "survey"
+              : "surveys"}
           </div>
         </div>
 
-        {/* Survey loading */}
+
+        {/* Survey Loading */}
 
         {surveyLoading && (
           <div
@@ -274,11 +307,14 @@ const EstateDetails = () => {
               p-6
             "
           >
-            <p className="text-sm text-slate-500">Loading surveys...</p>
+            <p className="text-sm text-slate-500">
+              Loading surveys...
+            </p>
           </div>
         )}
 
-        {/* Survey error */}
+
+        {/* Survey Error */}
 
         {!surveyLoading && surveyError && (
           <div
@@ -297,11 +333,14 @@ const EstateDetails = () => {
           </div>
         )}
 
-        {/* No surveys */}
 
-        {!surveyLoading && !surveyError && surveys.length === 0 && (
-          <div
-            className="
+        {/* No Surveys */}
+
+        {!surveyLoading &&
+          !surveyError &&
+          surveys.length === 0 && (
+            <div
+              className="
                 mt-5
                 rounded-xl
                 border
@@ -309,129 +348,81 @@ const EstateDetails = () => {
                 p-8
                 text-center
               "
-          >
-            <p
-              className="
+            >
+              <p
+                className="
                   font-medium
                   text-slate-700
                 "
-            >
-              No surveys available
-            </p>
+              >
+                No surveys available
+              </p>
 
-            <p
-              className="
+              <p
+                className="
                   mt-1
                   text-sm
                   text-slate-500
                 "
-            >
-              Survey records will appear here once they are uploaded.
-            </p>
-          </div>
-        )}
+              >
+                Survey records will appear here once
+                they are uploaded.
+              </p>
+            </div>
+          )}
 
-        {/* Survey cards */}
 
-        {!surveyLoading && surveys.length > 0 && (
-          <div
-            className="
+        {/* Survey Cards */}
+
+        {!surveyLoading &&
+          surveys.length > 0 && (
+            <div
+              className="
                 mt-5
                 grid
                 gap-5
                 md:grid-cols-2
                 xl:grid-cols-3
               "
-          >
-            {surveys.map((survey) => {
-              const statistics = survey.statistics || {};
-
-              return (
+            >
+              {surveys.map((survey) => (
                 <SurveyCard
-                  key={survey._id || survey.id || `${estateId}-${survey.year}`}
+                  key={
+                    survey._id ||
+                    survey.id ||
+                    `${estateId}-${survey.year}`
+                  }
                   survey={survey}
-                  onOpen={() => navigate(`/surveys/${survey._id || survey.id}`)}
+                  onOpen={() =>
+                    navigate(
+                      `/surveys/${
+                        survey._id ||
+                        survey.id
+                      }`
+                    )
+                  }
                 />
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+
       </section>
 
+
       {/* =========================================================
-          COMPARISON PREVIEW
+          MULTI-YEAR COMPARISON
       ========================================================== */}
 
       {comparisonSurveys.length >= 2 && (
-        <section
-          className="
-            rounded-xl
-            border
-            bg-white
-            p-6
-            shadow-sm
-          "
-        >
-          <div>
-            <h2
-              className="
-                text-xl
-                font-bold
-                text-slate-900
-              "
-            >
-              Multi-Year Analysis
-            </h2>
-
-            <p
-              className="
-                mt-1
-                text-sm
-                text-slate-500
-              "
-            >
-              This estate has multiple survey years available for comparison.
-            </p>
-          </div>
-
-          <div
-            className="
-              mt-5
-              flex
-              flex-wrap
-              gap-3
-            "
-          >
-            {comparisonSurveys.map((survey) => (
-              <button
-                key={survey._id || survey.id || survey.year}
-                type="button"
-                onClick={() => navigate(`/surveys/${survey._id || survey.id}`)}
-                className="
-                  rounded-lg
-                  border
-                  border-slate-200
-                  bg-slate-50
-                  px-4
-                  py-2
-                  text-sm
-                  font-medium
-                  text-slate-700
-                  transition
-                  hover:border-green-300
-                  hover:bg-green-50
-                  hover:text-green-700
-                "
-              >
-                {survey.year}
-              </button>
-            ))}
-          </div>
-        </section>
+        <SurveyComparison
+          surveys={comparisonSurveys}
+        />
       )}
+
     </div>
   );
 };
+
 
 /*
 |--------------------------------------------------------------------------
@@ -467,13 +458,14 @@ const InfoCard = ({ title, value }) => {
           font-semibold
           text-slate-900
         "
-        title={value}
+        title={String(value)}
       >
         {value}
       </p>
     </div>
   );
 };
+
 
 /*
 |--------------------------------------------------------------------------
@@ -485,7 +477,9 @@ const SurveyCard = ({ survey, onOpen }) => {
   const statistics = survey.statistics || {};
 
   const surveyDate = survey.surveyDate
-    ? new Date(survey.surveyDate).toLocaleDateString()
+    ? new Date(
+        survey.surveyDate
+      ).toLocaleDateString()
     : "-";
 
   return (
@@ -500,6 +494,9 @@ const SurveyCard = ({ survey, onOpen }) => {
         hover:shadow-md
       "
     >
+
+      {/* Header */}
+
       <div
         className="
           flex
@@ -549,7 +546,8 @@ const SurveyCard = ({ survey, onOpen }) => {
         </span>
       </div>
 
-      {/* Survey date */}
+
+      {/* Survey Date */}
 
       <div className="mt-5">
         <p
@@ -573,7 +571,8 @@ const SurveyCard = ({ survey, onOpen }) => {
         </p>
       </div>
 
-      {/* Total trees */}
+
+      {/* Total Trees */}
 
       <div
         className="
@@ -600,11 +599,14 @@ const SurveyCard = ({ survey, onOpen }) => {
             text-slate-900
           "
         >
-          {Number(statistics.totalTrees || 0).toLocaleString()}
+          {Number(
+            statistics.totalTrees || 0
+          ).toLocaleString()}
         </p>
       </div>
 
-      {/* Health summary */}
+
+      {/* Health Summary */}
 
       <div
         className="
@@ -615,16 +617,34 @@ const SurveyCard = ({ survey, onOpen }) => {
           text-sm
         "
       >
-        <MiniStat label="Healthy" value={statistics.healthy} />
+        <MiniStat
+          label="Healthy"
+          value={statistics.healthy}
+        />
 
-        <MiniStat label="Moderate" value={statistics.moderate} />
+        <MiniStat
+          label="Moderate"
+          value={statistics.moderate}
+        />
 
-        <MiniStat label="Mild Stress" value={statistics.mildStress} />
+        <MiniStat
+          label="Mild Stress"
+          value={statistics.mildStress}
+        />
 
-        <MiniStat label="Critical" value={statistics.critical} />
+        <MiniStat
+          label="Severe Stress"
+          value={statistics.severeStress}
+        />
+
+        <MiniStat
+          label="Critical"
+          value={statistics.critical}
+        />
       </div>
 
-      {/* Action */}
+
+      {/* Open Analysis */}
 
       <button
         type="button"
@@ -645,13 +665,15 @@ const SurveyCard = ({ survey, onOpen }) => {
       >
         Open Analysis
       </button>
+
     </div>
   );
 };
 
+
 /*
 |--------------------------------------------------------------------------
-| Mini statistic
+| Mini Statistic
 |--------------------------------------------------------------------------
 */
 
@@ -674,10 +696,13 @@ const MiniStat = ({ label, value }) => {
           text-slate-800
         "
       >
-        {Number(value || 0).toLocaleString()}
+        {Number(
+          value || 0
+        ).toLocaleString()}
       </p>
     </div>
   );
 };
+
 
 export default EstateDetails;
