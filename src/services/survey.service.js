@@ -19,9 +19,7 @@ export const getSurveySummary = async () => {
 */
 
 export const getEstateSurveys = async (estateId) => {
-  const response = await api.get(
-    `/surveys/estate/${estateId}`
-  );
+  const response = await api.get(`/surveys/estate/${estateId}`);
 
   return response.data;
 };
@@ -33,9 +31,7 @@ export const getEstateSurveys = async (estateId) => {
 */
 
 export const getSurveyMap = async (surveyId) => {
-  const response = await api.get(
-    `/surveys/${surveyId}/map`
-  );
+  const response = await api.get(`/surveys/${surveyId}/map`);
 
   return response.data;
 };
@@ -47,9 +43,7 @@ export const getSurveyMap = async (surveyId) => {
 */
 
 export const getSurveyGeoJson = async (surveyId) => {
-  const response = await api.get(
-    `/surveys/${surveyId}/geojson`
-  );
+  const response = await api.get(`/surveys/${surveyId}/geojson`);
 
   return response.data;
 };
@@ -61,9 +55,7 @@ export const getSurveyGeoJson = async (surveyId) => {
 */
 
 export const getSurveyById = async (surveyId) => {
-  const response = await api.get(
-    `/surveys/${surveyId}`
-  );
+  const response = await api.get(`/surveys/${surveyId}`);
 
   return response.data;
 };
@@ -75,10 +67,7 @@ export const getSurveyById = async (surveyId) => {
 */
 
 export const createSurvey = async (formData) => {
-  const response = await api.post(
-    "/surveys",
-    formData
-  );
+  const response = await api.post("/surveys", formData);
 
   return response.data;
 };
