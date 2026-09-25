@@ -200,7 +200,9 @@ const UploadSurvey = () => {
       formData.append("surveyDate", surveyDate);
 
       formData.append("geoJson", geoJsonFile);
+
       formData.append("orthomosaic", orthomosaicFile);
+
       formData.append("bounds", boundsFile);
 
       const response = await createSurvey(formData);
@@ -286,7 +288,9 @@ const UploadSurvey = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Survey information */}
+        {/* =====================================================
+            SURVEY INFORMATION
+        ====================================================== */}
 
         <section className="rounded-xl border bg-white p-6 shadow-sm">
           <div className="mb-6">
@@ -396,7 +400,9 @@ const UploadSurvey = () => {
           )}
         </section>
 
-        {/* Files */}
+        {/* =====================================================
+            SURVEY FILES
+        ====================================================== */}
 
         <section className="rounded-xl border bg-white p-6 shadow-sm">
           <div className="mb-6">
@@ -442,15 +448,131 @@ const UploadSurvey = () => {
           </div>
         </section>
 
-        {/* Expected bounds format */}
+        {/* =====================================================
+            REQUIRED FILE FORMATS
+        ====================================================== */}
 
-        <section className="rounded-xl border bg-slate-50 p-5">
-          <p className="text-sm font-semibold text-slate-800">
-            Required bounds JSON structure
-          </p>
+        <section className="space-y-5">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Required File Formats
+            </h2>
 
-          <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 p-4 text-xs text-slate-100">
-            {`{
+            <p className="mt-1 text-sm text-slate-500">
+              Make sure the uploaded GeoJSON and bounds files follow these
+              structures.
+            </p>
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-2">
+            {/* Required GeoJSON */}
+
+            <div className="min-w-0 rounded-xl border bg-slate-50 p-5">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">
+                  Required GeoJSON structure
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Each surveyed tree must be represented as a Point feature
+                  containing the required NDVI properties.
+                </p>
+              </div>
+
+              <pre className="mt-3 max-h-[520px] overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-5 text-slate-100">
+                {`{
+  "type": "FeatureCollection",
+  "name": "Makandura_2025_NDVI",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::3857"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Id": 1,
+        "StateName": "Makandura Estate",
+        "NDVI_Value": 0.79421,
+        "NDVI_Class": "Healthy",
+        "NDVI_No": 3
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8903273.102675419,
+          816891.6356315641
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Id": 2,
+        "StateName": "Makandura Estate",
+        "NDVI_Value": 0.82315,
+        "NDVI_Class": "Moderate",
+        "NDVI_No": 2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8903377.940883981,
+          816890.175991476
+        ]
+      }
+    }
+  ]
+}`}
+              </pre>
+
+              <div className="mt-4 space-y-2 text-xs text-slate-500">
+                <p>
+                  <span className="font-semibold text-slate-700">
+                    Geometry:
+                  </span>{" "}
+                  Point
+                </p>
+
+                <p>
+                  <span className="font-semibold text-slate-700">CRS:</span>{" "}
+                  EPSG:3857
+                </p>
+
+                <p>
+                  <span className="font-semibold text-slate-700">
+                    Required properties:
+                  </span>{" "}
+                  Id, StateName, NDVI_Value, NDVI_Class and NDVI_No
+                </p>
+
+                <p>
+                  <span className="font-semibold text-slate-700">
+                    NDVI classes:
+                  </span>{" "}
+                  Healthy, Moderate, Mild Stress, Severe Stress and Critical
+                </p>
+              </div>
+            </div>
+
+            {/* Required Bounds JSON */}
+
+            <div className="min-w-0 rounded-xl border bg-slate-50 p-5">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">
+                  Required bounds JSON structure
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  The bounds file defines the geographic extent used to position
+                  the orthomosaic.
+                </p>
+              </div>
+
+              <pre className="mt-3 overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-5 text-slate-100">
+                {`{
   "crs": "EPSG:4326",
   "bounds": {
     "north": 7.32192888,
@@ -459,10 +581,35 @@ const UploadSurvey = () => {
     "west": 79.97715813
   }
 }`}
-          </pre>
+              </pre>
+
+              <div className="mt-4 space-y-2 text-xs text-slate-500">
+                <p>
+                  <span className="font-semibold text-slate-700">CRS:</span>{" "}
+                  EPSG:4326
+                </p>
+
+                <p>
+                  <span className="font-semibold text-slate-700">
+                    Required bounds:
+                  </span>{" "}
+                  north, south, east and west
+                </p>
+
+                <p>
+                  <span className="font-semibold text-slate-700">
+                    Value type:
+                  </span>{" "}
+                  Numbers
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Actions */}
+        {/* =====================================================
+            ACTIONS
+        ====================================================== */}
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
