@@ -12,6 +12,7 @@ import EstateDetails from "../pages/estates/EstateDetails";
 import Estates from "../pages/estates/Estates";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import SurveyAnalysis from "../pages/surveys/SurveyAnalysis";
+import UploadSurvey from "../pages/surveys/UploadSurvey";
 
 const AppRoutes = () => {
   return (
@@ -92,6 +93,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={["Admin", "Analyst", "Estate Manager"]}>
             <SurveyAnalysis />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/surveys/upload"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "Analyst"]}>
+            <UploadSurvey />
           </ProtectedRoute>
         }
       />
