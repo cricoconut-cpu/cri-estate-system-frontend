@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";
+import Users from "../pages/admin/Users";
 import AnalystDashboard from "../pages/analyst/AnalystDashboard";
 import Login from "../pages/auth/Login";
 import EstateDetails from "../pages/estates/EstateDetails";
@@ -47,6 +48,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={["Admin"]}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <Users />
             </ProtectedRoute>
           }
         />
