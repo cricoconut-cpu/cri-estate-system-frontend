@@ -1,32 +1,36 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import Login from "../pages/auth/Login";
-import Unauthorized from "../pages/shared/Unauthorized";
-
 import DashboardLayout from "../layouts/DashboardLayout";
-import ProtectedRoute from "./ProtectedRoute";
 
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AnalystDashboard from "../pages/analyst/AnalystDashboard";
+import Login from "../pages/auth/Login";
 import EstateDetails from "../pages/estates/EstateDetails";
 import Estates from "../pages/estates/Estates";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
+import Unauthorized from "../pages/shared/Unauthorized";
 import SurveyAnalysis from "../pages/surveys/SurveyAnalysis";
 import UploadSurvey from "../pages/surveys/UploadSurvey";
+
+import ProtectedRoute from "./ProtectedRoute";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Root Route */}
+      {/* =========================================================
+          PUBLIC ROUTES
+      ========================================================== */}
+
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* Login */}
       <Route path="/login" element={<Login />} />
 
-      {/* Unauthorized */}
       <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* Protected Application Layout */}
+      {/* =========================================================
+          PROTECTED APPLICATION
+      ========================================================== */}
+
       <Route
         element={
           <ProtectedRoute>
@@ -34,7 +38,10 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        {/* Admin Dashboard */}
+        {/* =====================================================
+            ADMIN DASHBOARD
+        ====================================================== */}
+
         <Route
           path="/admin"
           element={
@@ -44,7 +51,10 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Analyst Dashboard */}
+        {/* =====================================================
+            ANALYST DASHBOARD
+        ====================================================== */}
+
         <Route
           path="/analyst"
           element={
@@ -54,7 +64,23 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Estates */}
+        {/* =====================================================
+            ESTATE MANAGER DASHBOARD
+        ====================================================== */}
+
+        <Route
+          path="/manager"
+          element={
+            <ProtectedRoute allowedRoles={["Estate Manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* =====================================================
+            ESTATES
+        ====================================================== */}
+
         <Route
           path="/estates"
           element={
@@ -77,36 +103,39 @@ const AppRoutes = () => {
           }
         />
 
-        {/* Estate Manager Dashboard */}
+        {/* =====================================================
+            SURVEY UPLOAD
+        ====================================================== */}
+
         <Route
-          path="/manager"
+          path="/surveys/upload"
           element={
-            <ProtectedRoute allowedRoles={["Estate Manager"]}>
-              <ManagerDashboard />
+            <ProtectedRoute allowedRoles={["Admin", "Analyst"]}>
+              <UploadSurvey />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* =====================================================
+            SURVEY ANALYSIS
+        ====================================================== */}
+
+        <Route
+          path="/surveys/:surveyId"
+          element={
+            <ProtectedRoute
+              allowedRoles={["Admin", "Analyst", "Estate Manager"]}
+            >
+              <SurveyAnalysis />
             </ProtectedRoute>
           }
         />
       </Route>
 
-      <Route
-        path="/surveys/:surveyId"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "Analyst", "Estate Manager"]}>
-            <SurveyAnalysis />
-          </ProtectedRoute>
-        }
-      />
+      {/* =========================================================
+          UNKNOWN ROUTES
+      ========================================================== */}
 
-      <Route
-        path="/surveys/upload"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "Analyst"]}>
-            <UploadSurvey />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Catch-all Route */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
