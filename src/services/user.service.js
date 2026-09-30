@@ -23,3 +23,29 @@ export const createUser = async (userData) => {
 
   return response.data;
 };
+
+/*
+|--------------------------------------------------------------------------
+| Update User
+|--------------------------------------------------------------------------
+*/
+
+export const updateUser = async (userId, userData) => {
+  const response = await api.patch(`/users/${userId}`, userData);
+
+  return response.data;
+};
+
+/*
+|--------------------------------------------------------------------------
+| Activate / Deactivate User
+|--------------------------------------------------------------------------
+*/
+
+export const updateUserStatus = async (userId, isActive) => {
+  const response = await api.patch(`/users/${userId}/status`, {
+    isActive,
+  });
+
+  return response.data;
+};
